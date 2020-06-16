@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, Image } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-export default function MovieList() {
+export default function MovieList(props) {
 
-    const [ movies, setMovies ] = useState([]);
+  const [ movies, setMovies ] = useState([]);
 
-    useEffect(() => {
-        fetch('http://192.168.43.82:19000/api/movies/', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Token 97ff16ffae4cbaa85b080110ab110e478da22fe4`
-            }
-        })
-        .then(res => res.json())
-        .then(jsonRes => setMovies(jsonRes))
-        .catch(error => console.log(error));
-    }, []); 
+  useEffect(() => {
+      fetch('http://192.168.43.82:19000/api/movies/', {
+          method: 'GET',
+          headers: {
+              'Authorization': `Token 97ff16ffae4cbaa85b080110ab110e478da22fe4`
+          }
+      })
+      .then(res => res.json())
+      .then(jsonRes => setMovies(jsonRes))
+      .catch(error => console.log(error));
+  }, []); 
+
+  const movieClicked = (movie) => {
+    props.navigation.navigate("Detail", {movie: movie, title: movie.title})
+  }
 
   return (
     <View>
@@ -27,9 +32,11 @@ export default function MovieList() {
       <FlatList 
           data={movies}
           renderItem={({item}) => (
-              <View style={styles.item} >
-                <Text style={styles.itemText}>{item.title}</Text>
-              </View>
+              <TouchableOpacity onPress={() => movieClicked(item)}>
+                <View style={styles.item} >
+                  <Text style={styles.itemText}>{item.title}</Text>
+                </View>
+              </TouchableOpacity>
           )}
           keyExtractor={(item, index) => index.toString() }
       />
