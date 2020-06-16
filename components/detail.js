@@ -1,11 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 
 export default function Detail(props) {
 
     const movie = props.navigation.getParam('movie', null);
+    const [ highlight, setHighlight ] = useState(0);
+
+    const rateClicked = () => {
+        if( highlight > 0 && highlight < 6 ){
+            fetch(`http://192.168.43.82:19000/api/movies/${movie.id}/rate_movie/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Token 97ff16ffae4cbaa85b080110ab110e478da22fe4`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({star: highlight})
+            })
+            .then( res => res.json())
+            .then( res => {
+                setHighlight(0);
+                Alert.alert("Rating", res.message);
+            })
+            .catch(error => Alert.alert("Error", error));
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -17,7 +37,21 @@ export default function Detail(props) {
                 <FontAwesomeIcon style={movie.avg_rating > 4 ? styles.orange : styles.white } icon={faStar} />
                 <Text style={styles.white}>({movie.no_of_ratings})</Text>
             </View>
+
             <Text style={styles.description}>{movie.description}</Text>
+
+            <View style={{borderBottomColor: 'white', borderBottomWidth: 2}} />
+
+            <Text style={styles.description}>Rate it !!!</Text>
+
+            <View style={styles.starContainer}>
+                <FontAwesomeIcon style={highlight > 0 ? styles.purple : styles.grey } icon={faStar} size={48} onPress={() => setHighlight(1) } />
+                <FontAwesomeIcon style={highlight > 1 ? styles.purple : styles.grey } icon={faStar} size={48} onPress={() => setHighlight(2) } />
+                <FontAwesomeIcon style={highlight > 2 ? styles.purple : styles.grey } icon={faStar} size={48} onPress={() => setHighlight(3) } />
+                <FontAwesomeIcon style={highlight > 3 ? styles.purple : styles.grey } icon={faStar} size={48} onPress={() => setHighlight(4) } />
+                <FontAwesomeIcon style={highlight > 4 ? styles.purple : styles.grey } icon={faStar} size={48} onPress={() => setHighlight(5) } />
+            </View>
+            <Button title="Rate" onPress={() => rateClicked()} />
         </View>
     );
 }
@@ -70,5 +104,11 @@ const styles = StyleSheet.create({
   },
   white: {
       color: 'white'
+  },
+  purple: {
+      color: 'purple'
+  },
+  grey: {
+      color: '#ccc'
   }
 });
