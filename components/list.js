@@ -13,9 +13,9 @@ export default function MovieList(props) {
               'Authorization': `Token 97ff16ffae4cbaa85b080110ab110e478da22fe4`
           }
       })
-      .then(res => res.json())
-      .then(jsonRes => setMovies(jsonRes))
-      .catch(error => console.log(error));
+      .then( res => res.json())
+      .then( jsonRes => setMovies(jsonRes))
+      .catch( error => console.log(error));
   }, []); 
 
   const movieClicked = (movie) => {
