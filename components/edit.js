@@ -8,19 +8,36 @@ export default function Edit(props) {
     const [ description, setDescription ] = useState(movie.description);
 
     const saveMovie = () => {
-        fetch(`http://192.168.43.82:19000/api/movies/${movie.id}/`, {
-          method: 'PUT',
-          headers: {
-              'Authorization': `Token 97ff16ffae4cbaa85b080110ab110e478da22fe4`,
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({title: title, description: description})
-        })
-        .then( res => res.json())
-        .then( movie => {
-            props.navigation.navigate("Detail", {movie: movie, title: movie.title})
-        })
-        .catch(error => console.log(error));
+
+        if(movie.id) {
+            fetch(`http://192.168.43.82:19000/api/movies/${movie.id}/`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Token 97ff16ffae4cbaa85b080110ab110e478da22fe4`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({title: title, description: description})
+            })
+            .then( res => res.json())
+            .then( movie => {
+                props.navigation.navigate("Detail", {movie: movie, title: movie.title})
+            })
+            .catch(error => console.log(error));
+        } else {
+            fetch(`http://192.168.43.82:19000/api/movies/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Token 97ff16ffae4cbaa85b080110ab110e478da22fe4`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({title: title, description: description})
+            })
+            .then( res => res.json())
+            .then( movie => {
+                props.navigation.navigate("MovieList")
+            })
+            .catch(error => console.log(error));
+        }
     };
 
 
@@ -40,7 +57,7 @@ export default function Edit(props) {
                 onChangeText={text => setDescription(text) }
                 value={description}
             />
-            <Button onPress={() => saveMovie()} title="Save" />
+            <Button onPress={() => saveMovie()} title={movie.id ? "Edit" : "Add"} />
         </View>
     );
 }

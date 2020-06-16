@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, Image } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { StyleSheet, Text, View, FlatList, Image, Button, TouchableOpacity } from 'react-native';
 
 export default function MovieList(props) {
 
@@ -43,6 +42,23 @@ export default function MovieList(props) {
     </View>
   );
 }
+
+MovieList.navigationOptions = screenProps => ({
+  title: "List of Movies",
+  headerStyle: {
+      backgroundColor: 'orange'
+  },
+  headerTintColor: '#fff',
+  headerTitleStyle: {
+      fontWeight: 'bold',
+      fontSize:  24
+  },
+  headerRight: () => (
+      <Button title="Add New" color="black" 
+          onPress={ () => screenProps.navigation.navigate("Edit", {movie: { title: '', description: '' } } )} 
+      />
+  )
+})
 
 const styles = StyleSheet.create({
   container: {
