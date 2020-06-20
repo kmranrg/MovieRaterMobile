@@ -20,7 +20,7 @@ export default function Edit(props) {
             })
             .then( res => res.json())
             .then( movie => {
-                props.navigation.navigate("Detail", {movie: movie, title: movie.title})
+                props.navigation.navigate("Detail", {movie: movie, title: movie.title, token: token})
             })
             .catch(error => console.log(error));
         } else {
@@ -71,8 +71,29 @@ Edit.navigationOptions = screenProps => ({
     headerTitleStyle: {
         fontWeight: 'bold',
         fontSize:  24
-    }
+    },
+    headerRight: () => (
+        <Button title="Remove" color="black" 
+            onPress={ () => removeClicked(screenProps)} 
+        />
+    )
 })
+
+const removeClicked = (props) => {
+    const movie = props.navigation.getParam("movie")
+    console.log(movie);
+    fetch(`http://192.168.43.82:19000/api/movies/${movie.id}/`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Token 97ff16ffae4cbaa85b080110ab110e478da22fe4`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then( res => {
+                props.navigation.navigate("MovieList")
+            })
+            .catch(error => console.log(error));
+}
 
 const styles = StyleSheet.create({
   container: {

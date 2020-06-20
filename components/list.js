@@ -1,21 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, Button, TouchableOpacity, AsyncStorage } from 'react-native';
 
 export default function MovieList(props) {
 
   const [ movies, setMovies ] = useState([]);
+  let token = null;
+
+  const getData = async () => {
+    token = await AsyncStorage.getItem('MR_Token');
+    if (token) {
+      getMovies();
+    } else {
+      props.navigation.navigate("Auth")
+    }
+  };
 
   useEffect(() => {
-      fetch('http://192.168.43.82:19000/api/movies/', {
-          method: 'GET',
-          headers: {
-              'Authorization': `Token 97ff16ffae4cbaa85b080110ab110e478da22fe4`
-          }
-      })
-      .then( res => res.json())
-      .then( jsonRes => setMovies(jsonRes))
-      .catch( error => console.log(error));
+    getData();
   }, []); 
+
+  const getMovies = () => {
+    fetch('http://192.168.43.82:19000/api/movies/', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Token ${token}`
+        }
+    })
+    .then( res => res.json())
+    .then( jsonRes => setMovies(jsonRes))
+    .catch( error => console.log(error));
+  }
 
   const movieClicked = (movie) => {
     props.navigation.navigate("Detail", {movie: movie, title: movie.title})
