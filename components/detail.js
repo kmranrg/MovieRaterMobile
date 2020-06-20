@@ -6,6 +6,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 export default function Detail(props) {
 
     const movie = props.navigation.getParam('movie', null);
+    const token = props.navigation.getParam('token', '');
     const [ highlight, setHighlight ] = useState(0);
 
     const rateClicked = () => {
@@ -13,7 +14,7 @@ export default function Detail(props) {
             fetch(`http://192.168.43.82:19000/api/movies/${movie.id}/rate_movie/`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Token 97ff16ffae4cbaa85b080110ab110e478da22fe4`,
+                    'Authorization': `Token ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({star: highlight})
